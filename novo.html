@@ -18,23 +18,28 @@
         <a href="concluido.html">Concluído</a>
         <a href="novo.html" class="active">Novo Chamado</a>
     </nav>
+<form id="novo-chamado-form">
+    <input type="text" id="titulo" placeholder="Título do chamado" required>
+    <textarea id="descricao" placeholder="Descrição do chamado" rows="5" required></textarea>
+    <button type="submit">Criar Chamado</button>
+</form>
 
-    <main>
-        <h2>Novo Chamado</h2>
-        <form id="novo-chamado-form">
-            <input type="text" placeholder="Título do chamado" required>
-            <textarea placeholder="Descrição do chamado" rows="5" required></textarea>
-            <button type="submit">Criar Chamado</button>
-        </form>
-    </main>
+<script>
+    const form = document.getElementById('novo-chamado-form');
 
-    <script>
-        const form = document.getElementById('novo-chamado-form');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Chamado criado com sucesso!');
-           
-        });
-    </script>
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // evita envio padrão
+
+        // pega os valores dos campos
+        const titulo = document.getElementById('titulo').value;
+        const descricao = document.getElementById('descricao').value;
+
+        // salva no localStorage
+        localStorage.setItem('novoChamado', JSON.stringify({titulo, descricao}));
+
+        // redireciona para a página de chamados
+        window.location.href = 'chamados.html';
+    });
+</script>
 </body>
 </html>
