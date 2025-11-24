@@ -23,12 +23,29 @@
             <label for="senha">Senha</label>
             <input type="password" id="senha" placeholder="Digite sua senha">
 
-            <button class="btn">Login</button>
+            <button class="btn" id="loginBtn">Login</button>
 
             <p class="forgot">Esqueceu a senha?</p>
         </div>
 
     </div>
+
+    <script>
+        const loginBtn = document.getElementById("loginBtn");
+
+        loginBtn.addEventListener("click", () => {
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+
+            // Simulação de login
+            if(email === "teste@teste.com" && senha === "1234"){
+                // Redireciona para a tela de chamados
+                window.location.href = "chamados.html";
+            } else {
+                alert("Email ou senha incorretos!");
+            }
+        });
+    </script>
 
 </body>
 </html>
