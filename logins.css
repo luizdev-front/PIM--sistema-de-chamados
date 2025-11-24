@@ -6,12 +6,13 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* ---------- HEADER COM LOGO ---------- */
 .header {
     width: 100%;
     background: #0d2a52;
     padding: 20px 0;
-    text-align: center;
+    display: flex;
+    justify-content: center; /* centraliza horizontal */
+    align-items: center;     /* centraliza vertical */
 }
 
 .header .logo {
@@ -20,6 +21,7 @@ body {
     font-weight: bold;
     margin: 0;
 }
+
 
 /* ---------- CONTAINER ---------- */
 .container {
