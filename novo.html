@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Chamado</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1 class="logo"><span class="icon">💬</span> Sistema de Chamados</h1>
+        <div class="notif">🔔 <span>2</span></div>
+    </header>
+
+    <nav class="tabs">
+        <a href="aberto.html">Aberto</a>
+        <a href="andamento.html">Em andamento</a>
+        <a href="concluido.html">Concluído</a>
+        <a href="novo.html" class="active">Novo Chamado</a>
+    </nav>
+
+    <main>
+        <h2>Novo Chamado</h2>
+        <form id="novo-chamado-form">
+            <input type="text" placeholder="Título do chamado" required>
+            <textarea placeholder="Descrição do chamado" rows="5" required></textarea>
+            <button type="submit">Criar Chamado</button>
+        </form>
+    </main>
+
+    <script>
+        const form = document.getElementById('novo-chamado-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Chamado criado com sucesso!');
+            window.location.href = 'aberto.html'; // leva de volta para chamados abertos
+        });
+    </script>
+</body>
+</html>
