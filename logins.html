@@ -1,51 +1,45 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SupportAI</title>
-    <link rel="stylesheet" href="logins.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - SupportAI</title>
+<link rel="stylesheet" href="logins.css">
 </head>
 <body>
 
-    <div class="container">
-
-        <h1 class="logo">
-            <span class="icon">💬</span> SupportAI
-        </h1>
-
-        <div class="card">
-            <h2>Entrar</h2>
-
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Digite seu email">
-
-            <label for="senha">Senha</label>
-            <input type="password" id="senha" placeholder="Digite sua senha">
-
-            <button class="btn" id="loginBtn">Login</button>
-
-            <p class="forgot">Esqueceu a senha?</p>
-        </div>
-
+<div class="container">
+    <h1 class="logo">💬 SupportAI</h1>
+    <div class="card">
+        <h2>Entrar</h2>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="senha" placeholder="Senha">
+        <button id="loginBtn">Login</button>
     </div>
+</div>
 
-    <script>
-        const loginBtn = document.getElementById("loginBtn");
+<script>
+document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
 
-        loginBtn.addEventListener("click", () => {
-            const email = document.getElementById("email").value;
-            const senha = document.getElementById("senha").value;
-
-            // Simulação de login
-            if(email === "teste@teste.com" && senha === "1234"){
-                // Redireciona para a tela de chamados
-                window.location.href = "chamados.html";
-            } else {
-                alert("Email ou senha incorretos!");
-            }
+    try {
+        const res = await fetch("URL_DO_BACKEND/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, senha })
         });
-    </script>
+        const data = await res.json();
+        if(data.success){
+            window.location.href = "chamados.html";
+        } else {
+            alert("Email ou senha incorretos!");
+        }
+    } catch {
+        alert("Erro ao conectar com o servidor");
+    }
+});
+</script>
 
 </body>
 </html>
