@@ -1,32 +1,42 @@
+/* ---------- GLOBAL ---------- */
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
     margin: 0;
     padding: 0;
+    color: #333;
 }
 
-/* HEADER */
+/* ---------- HEADER ---------- */
 header {
-    background: #ffffff;
-    padding: 20px;
+    background: #fff;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .logo {
-    margin: 0;
-    font-size: 24px;
+    font-size: 28px;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .notif {
     position: relative;
-    font-size: 26px;
+    font-size: 28px;
     cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.notif:hover {
+    transform: scale(1.1);
 }
 
 .notif span {
@@ -34,85 +44,120 @@ header {
     top: -8px;
     right: -8px;
     background: #0a2a57;
-    color: white;
+    color: #fff;
     font-size: 12px;
-    padding: 2px 6px;
+    font-weight: 600;
+    padding: 3px 7px;
     border-radius: 50%;
 }
 
-/* CONTAINER */
+/* ---------- CONTAINER ---------- */
 .container {
-    padding: 20px;
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 20px;
 }
 
 .container h2 {
-    font-size: 26px;
-    margin-bottom: 15px;
-}
-
-/* BOTÃO NOVO CHAMADO */
-.novo-chamado {
-    background: #0a2a57;
-    color: white;
-    width: 180px;
-    padding: 14px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    cursor: pointer;
+    font-size: 28px;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
-/* TABS */
+/* ---------- BOTÃO NOVO CHAMADO ---------- */
+.novo-chamado {
+    background: #0a2a57;
+    color: #fff;
+    width: 180px;
+    padding: 14px 0;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 25px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.novo-chamado:hover {
+    background: #081f42;
+    transform: translateY(-2px);
+}
+
+/* ---------- TABS ---------- */
 .tabs {
     display: flex;
     align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 25px;
+    margin-bottom: 25px;
 }
 
 .tabs button {
     background: none;
     border: none;
     font-size: 16px;
-    color: #444;
+    color: #666;
     cursor: pointer;
+    padding-bottom: 6px;
+    transition: color 0.2s;
+}
+
+.tabs button:hover {
+    color: #0a2a57;
 }
 
 .tabs .active {
     border-bottom: 2px solid #0a2a57;
-    font-weight: bold;
-    padding-bottom: 4px;
+    font-weight: 600;
     color: #0a2a57;
 }
 
 .filter {
     margin-left: auto;
     border: 1px solid #0a2a57;
-    padding: 6px 14px;
+    padding: 7px 16px;
     border-radius: 12px;
+    font-size: 14px;
+    color: #0a2a57;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-/* CARDS */
+.filter:hover {
+    background: #f0f2f5;
+}
+
+/* ---------- CARDS ---------- */
 .card {
-    background: white;
-    padding: 18px;
-    border-radius: 14px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 15px;
+    background: #fff;
+    padding: 20px 22px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 18px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
 .card h3 {
-    margin: 0 0 8px;
-    font-size: 18px;
+    margin: 0 0 10px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #0a2a57;
 }
 
 .card p {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: #555;
+    line-height: 1.5;
 }
 
 .time {
-    font-size: 14px;
-    color: #666;
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
 }
