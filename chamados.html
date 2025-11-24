@@ -1,55 +1,51 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chamados Abertos</title> 
-    <link rel="stylesheet" href="chamados.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chamados Abertos</title> 
+<link rel="stylesheet" href="chamados.css">
 </head>
 <body>
-    <header>
-        <h1 class="logo"><span class="icon">💬</span> Sistema de Chamados</h1>
-        <div class="notif">🔔 <span>2</span></div>
-    </header>
+<header>
+    <h1 class="logo"><span class="icon">💬</span> Sistema de Chamados</h1>
+    <div class="notif">🔔 <span>2</span></div>
+</header>
 
-    <nav class="tabs">
-        <a href="index.html" class="active">Aberto</a>
-        <a href="andamento.html">Em andamento</a>
-        <a href="concluido.html">Concluído</a>
-        <a href="novo.html">Novo Chamado</a>
-    </nav>
+<nav class="tabs">
+    <a href="index.html" class="active">Aberto</a>
+    <a href="andamento.html">Em andamento</a>
+    <a href="concluido.html">Concluído</a>
+    <a href="novo.html">Novo Chamado</a>
+</nav>
 
-    <main>
-        <h2>Chamados Abertos</h2>
-        <div id="lista-chamados"></div>
-    </main>
+<main>
+    <h2>Chamados Abertos</h2>
+    <div id="lista-chamados"></div>
+</main>
 
-    <script>
-        const container = document.getElementById('lista-chamados');
+<script>
+const container = document.getElementById('lista-chamados');
 
-        // pega os chamados salvos no localStorage
-        let chamados = JSON.parse(localStorage.getItem('chamados')) || [];
+let chamados = JSON.parse(localStorage.getItem('chamados')) || [];
 
-        // se houver chamados fixos, pode manter ou remover
-        const chamadosFixos = [
-            {titulo: "Erro no sistema ao salvar", descricao: "Estou enfrentando um erro ao salvar alterações em documentos.", tempo: "há 2 dias"},
-            {titulo: "Problema de conexão de rede", descricao: "Não consigo acessar a internet em minha estação de trabalho.", tempo: "há 5 dias"}
-        ];
+const chamadosFixos = [
+    {titulo: "Erro no sistema ao salvar", descricao: "Estou enfrentando um erro ao salvar alterações em documentos.", tempo: "há 2 dias"},
+    {titulo: "Problema de conexão de rede", descricao: "Não consigo acessar a internet em minha estação de trabalho.", tempo: "há 5 dias"}
+];
 
-        chamados = chamadosFixos.concat(chamados);
+chamados = chamadosFixos.concat(chamados);
 
-        // exibe cada chamado
-        chamados.forEach(chamado => {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.innerHTML = `
-                <h3>${chamado.titulo}</h3>
-                <p>${chamado.descricao}</p>
-                <span class="time">${chamado.tempo || "recentemente"}</span>
-            `;
-            container.appendChild(div);
-        });
-    </script>
+chamados.forEach(chamado => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+        <h3>${chamado.titulo}</h3>
+        <p>${chamado.descricao}</p>
+        <span class="time">${chamado.tempo}</span>
+    `;
+    container.appendChild(div);
+});
+</script>
 </body>
 </html>
-  
