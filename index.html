@@ -23,7 +23,34 @@
         <p class= "cadastro">Cadastre-se</p>
     </div>
 </div> 
- 
+ <script>
+    // Botão de login
+    const loginBtn = document.getElementById('loginBtn');
+    loginBtn.addEventListener('click', () => {
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        // Simula validação simples
+        if(email && senha){
+            // Redireciona para a página de chamados
+            window.location.href = 'chamados.html'; 
+        } else {
+            alert('Preencha email e senha');
+        }
+    });
+
+    // Link de cadastro
+    const cadastroLink = document.querySelector('.cadastro');
+    cadastroLink.addEventListener('click', () => {
+        window.location.href = 'cadastro.html'; // Redireciona para a página de cadastro
+    });
+
+    // Link de "Esqueceu a senha?"
+    const forgotLink = document.querySelector('.forgot');
+    forgotLink.addEventListener('click', () => {
+        window.location.href = 'recuperar_senha.html'; // Redireciona para a página de recuperação
+    });
+</script>
 
 </body>
 </html>
