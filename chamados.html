@@ -1,51 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chamados Abertos</title> 
-<link rel="stylesheet" href="chamados.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Chamado - InfoTech</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-    <h1 class="logo"><span class="icon">💬</span> Sistema de Chamados</h1>
-    <div class="notif">🔔 <span>2</span></div>
+
+<header class="header">
+    <div class="header-content">
+        <div class="logo-container">
+            <h1 class="logo">InfoTech <span style="font-size: 0.8rem; font-weight: normal;">| Novo Chamado</span></h1>
+        </div>
+        <div>
+            <button id="btnVoltar" class="btn-sair">Cancelar</button>
+        </div>
+    </div>
 </header>
 
 <nav class="tabs">
-    <a href="index.html" class="active">Aberto</a>
+    <a href="chamados.html">Abertos</a>
     <a href="andamento.html">Em andamento</a>
-    <a href="concluido.html">Concluído</a>
-    <a href="novo.html">Novo Chamado</a>
+    <a href="concluido.html">Concluídos</a>
+    <a href="novo_chamado.html" class="active" style="background-color: rgba(255,255,255,0.2);">+ Novo Chamado</a>
 </nav>
 
-<main>
-    <h2>Chamados Abertos</h2>
-    <div id="lista-chamados"></div>
-</main>
+<div class="container" style="align-items: flex-start; padding-top: 40px;">
+    <div class="card" style="max-width: 600px; text-align: left;">
+        <h2>Abrir Solicitação</h2>
+        <p style="margin-bottom: 20px; color: #666;">Descreva seu problema detalhadamente.</p>
+        
+        <form id="formNovoChamado">
+            <label for="titulo" style="font-weight: bold; display: block; margin-bottom: 5px;">Título do Problema</label>
+            <input type="text" id="titulo" placeholder="Ex: Impressora não liga" required>
+
+            <label for="descricao" style="font-weight: bold; display: block; margin-bottom: 5px;">Descrição Detalhada</label>
+            <textarea id="descricao" rows="5" placeholder="Descreva o que aconteceu..." required></textarea>
+
+            <label for="prioridade" style="font-weight: bold; display: block; margin-bottom: 5px;">Prioridade</label>
+            <select id="prioridade" class="input-padrao" required>
+                <option value="baixa">Baixa</option>
+                <option value="media" selected>Média</option>
+                <option value="alta">Alta</option>
+            </select>
+
+            <button type="submit" class="btn btn-green" style="margin-top: 20px;">Salvar Chamado</button>
+        </form>
+    </div>
+</div>
 
 <script>
-const container = document.getElementById('lista-chamados');
+    // Botão Cancelar
+    document.getElementById('btnVoltar').addEventListener('click', () => {
+        window.location.href = 'chamados.html';
+    });
 
-let chamados = JSON.parse(localStorage.getItem('chamados')) || [];
+    // Lógica de Salvar Chamado
+    const form = document.getElementById('formNovoChamado');
 
-const chamadosFixos = [
-    {titulo: "Erro no sistema ao salvar", descricao: "Estou enfrentando um erro ao salvar alterações em documentos.", tempo: "há 2 dias"},
-    {titulo: "Problema de conexão de rede", descricao: "Não consigo acessar a internet em minha estação de trabalho.", tempo: "há 5 dias"}
-];
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-chamados = chamadosFixos.concat(chamados);
+        const titulo = document.getElementById('titulo').value;
+        const descricao = document.getElementById('descricao').value;
+        const prioridade = document.getElementById('prioridade').value;
 
-chamados.forEach(chamado => {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `
-        <h3>${chamado.titulo}</h3>
-        <p>${chamado.descricao}</p>
-        <span class="time">${chamado.tempo}</span>
-    `;
-    container.appendChild(div);
-});
+        // 1. Pega a lista atual de chamados do banco (localStorage)
+        let todosChamados = JSON.parse(localStorage.getItem('bdChamados')) || [];
+
+        // 2. Cria o objeto do novo chamado
+        const novoChamado = {
+            id: Date.now(), // Gera um ID único baseado na hora atual
+            titulo: titulo,
+            descricao: descricao,
+            prioridade: prioridade,
+            status: "aberto", // Todo novo chamado começa como "aberto"
+            tempo: "Agora mesmo"
+        };
+
+        // 3. Adiciona no início da lista (unshift)
+        todosChamados.unshift(novoChamado);
+
+        // 4. Salva de volta no banco
+        localStorage.setItem('bdChamados', JSON.stringify(todosChamados));
+
+        alert("Chamado aberto com sucesso!");
+
+        // 5. Volta para a lista principal
+        window.location.href = 'chamados.html';
+    });
 </script>
+
 </body>
 </html>
