@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - InfoTech</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro - InfoTech</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -22,24 +22,24 @@
             <input type="email" id="email" placeholder="Email" required>
             <input type="password" id="senha" placeholder="Senha" required>
             <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
-            
             <button type="submit" id="cadastroBtn" class="btn btn-green">Cadastrar</button>
         </form>
-        
+        <p id="cadastroError" style="color:red;"></p>
         <p class="login-link">Já tem conta? <span class="entrar" id="linkEntrar">Entrar</span></p>
     </div>
 </div>
 
 <script>
-const API_CADASTRO_URL = 'http://localhost:7146/api/cadastro'; // HTTP para testes locais
-
+const API_CADASTRO_URL = 'http://localhost:7146/api/cadastro';
 const formCadastro = document.getElementById('formCadastro');
 const linkEntrar = document.getElementById('linkEntrar');
+const cadastroError = document.getElementById('cadastroError');
 
 linkEntrar.addEventListener('click', () => window.location.href = 'index.html');
 
 formCadastro.addEventListener('submit', async (e) => {
     e.preventDefault();
+    cadastroError.textContent = ''; // limpa erro anterior
 
     const nome = document.getElementById('nome').value;
     const email = document.getElementById('email').value;
@@ -47,12 +47,12 @@ formCadastro.addEventListener('submit', async (e) => {
     const confirmarSenha = document.getElementById('confirmarSenha').value;
 
     if (senha !== confirmarSenha) {
-        alert("As senhas não coincidem!");
+        cadastroError.textContent = "As senhas não coincidem!";
         return;
     }
 
     if (senha.length < 6) {
-        alert("A senha deve ter pelo menos 6 caracteres.");
+        cadastroError.textContent = "A senha deve ter pelo menos 6 caracteres.";
         return;
     }
 
@@ -71,7 +71,7 @@ formCadastro.addEventListener('submit', async (e) => {
         alert("Cadastro realizado com sucesso! Redirecionando para o Login.");
         window.location.href = 'index.html';
     } catch (error) {
-        alert('Falha no Cadastro: ' + error.message);
+        cadastroError.textContent = 'Falha no Cadastro: ' + error.message;
         console.error(error);
     }
 });
