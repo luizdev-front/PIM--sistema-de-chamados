@@ -1,28 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cadastro - InfoTech</title>
-<link rel="stylesheet" href="cadastro.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - InfoTech</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- HEADER COM LOGO -->
 <header class="header">
-    <h1 class="logo">InfoTech</h1>
+    <div class="logo-container">
+        <h1 class="logo">InfoTech</h1>
+    </div>
 </header>
 
 <div class="container">
     <div class="card">
-        <h2>Cadastro</h2>
-        <input type="text" id="nome" placeholder="Nome completo">
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="senha" placeholder="Senha">
-        <button id="cadastroBtn" class="btn">Cadastrar</button>
-        <p class="login-link">Já tem conta? <span class="entrar">Entrar</span></p>
+        <h2>Crie sua conta</h2>
+        <form id="formCadastro">
+            <input type="text" id="nome" placeholder="Nome completo" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <input type="password" id="confirmarSenha" placeholder="Confirmar Senha" required>
+            
+            <button type="submit" id="cadastroBtn" class="btn btn-green">Cadastrar</button>
+        </form>
+        
+        <p class="login-link">Já tem conta? <span class="entrar" id="linkEntrar">Entrar</span></p>
     </div>
 </div>
+
+<script>
+    // Lógica de Cadastro
+    const formCadastro = document.getElementById('formCadastro');
+    const linkEntrar = document.getElementById('linkEntrar');
+
+    // Evento de clique no botão "Entrar" (texto)
+    linkEntrar.addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+
+    // Evento de envio do formulário
+    formCadastro.addEventListener('submit', (e) => {
+        e.preventDefault(); // Evita recarregar a página
+
+        const nome = document.getElementById('nome').value;
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+        const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+        // 1. Validação Simples
+        if (senha !== confirmarSenha) {
+            alert("As senhas não coincidem!");
+            return;
+        }
+
+        if (senha.length < 6) {
+            alert("A senha deve ter pelo menos 6 caracteres.");
+            return;
+        }
+
+        // 2. Simulação de Banco de Dados (localStorage)
+        // Verifica se já existem usuários, se não, cria uma lista vazia
+        let usuarios = JSON.parse(localStorage.getItem('usuariosInfoTech')) || [];
+
+        // Verifica se o email já existe
+        const usuarioExistente = usuarios.find(user => user.email === email);
+        if (usuarioExistente) {
+            alert("Este email já está cadastrado!");
+            return;
+        }
+
+        // Cria o novo usuário
+        const novoUsuario = {
+            nome: nome,
+            email: email,
+            senha: senha // Em um sistema real, a senha seria criptografada!
+        };
+
+        // Salva na lista e atualiza o localStorage
+        usuarios.push(novoUsuario);
+        localStorage.setItem('usuariosInfoTech', JSON.stringify(usuarios));
+
+        alert("Cadastro realizado com sucesso!");
+        
+        // Redireciona para o Login
+        window.location.href = 'index.html';
+    });
+</script>
 
 </body>
 </html>
