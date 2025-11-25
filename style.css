@@ -242,3 +242,30 @@ main h2 {
     max-width: 1000px;
     margin: 0 auto;
 }
+/* --- ADIÇÕES PARA O FORMULÁRIO DE NOVO CHAMADO --- */
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical; /* Permite o usuário aumentar a altura se quiser */
+    font-family: inherit;
+}
+
+textarea:focus, select:focus {
+    outline: none;
+    border-color: #0056b3;
+}
+
+select.input-padrao {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+}
