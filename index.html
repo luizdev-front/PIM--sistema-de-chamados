@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - InfoTech</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - InfoTech</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body>    
+<body>
 
 <header class="header">
     <div class="logo-container">
@@ -20,31 +20,33 @@
         <form id="loginForm">
             <input type="email" id="email" placeholder="Email" required>
             <input type="password" id="senha" placeholder="Senha" required>
-            <button type="submit" id="loginBtn" class="btn">Login</button> 
+            <button type="submit" id="loginBtn" class="btn">Login</button>
         </form>
-        
+        <p id="loginError" style="color:red;"></p>
         <div class="links-uteis">
             <p class="forgot">Esqueceu a senha?</p>
             <p class="cadastro">Cadastre-se</p>
         </div>
     </div>
-</div> 
+</div>
 
 <script>
-const API_LOGIN_URL = 'http://localhost:7146/api/login'; // HTTP para testes locais
+const API_LOGIN_URL = 'http://localhost:7146/api/login';
 
 const loginForm = document.getElementById('loginForm');
 const cadastroLink = document.querySelector('.cadastro');
 const forgotLink = document.querySelector('.forgot');
+const loginError = document.getElementById('loginError');
 
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    loginError.textContent = ''; // limpa erro anterior
     
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
 
-    if(!email || !senha){
-        alert('Preencha email e senha');
+    if (!email || !senha) {
+        loginError.textContent = 'Preencha email e senha.';
         return;
     }
 
@@ -56,7 +58,8 @@ loginForm.addEventListener('submit', async (e) => {
         });
 
         if (!response.ok) {
-            throw new Error('Email ou senha inválidos.');
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || 'Email ou senha inválidos.');
         }
 
         const data = await response.json();
@@ -65,7 +68,7 @@ loginForm.addEventListener('submit', async (e) => {
 
         window.location.href = 'chamados.html';
     } catch (error) {
-        alert('Falha no Login: ' + error.message);
+        loginError.textContent = 'Falha no Login: ' + error.message;
         console.error(error);
     }
 });
@@ -73,5 +76,6 @@ loginForm.addEventListener('submit', async (e) => {
 cadastroLink.addEventListener('click', () => window.location.href = 'cadastro.html');
 forgotLink.addEventListener('click', () => window.location.href = 'recuperar_senha.html');
 </script>
+
 </body>
 </html>
