@@ -31,79 +31,51 @@
 </div>
 
 <script>
-    // URL do seu Back-End para Cadastro
-    const API_CADASTRO_URL = 'https://localhost:7146/api/cadastro'; 
-    
-    // Referências aos elementos
-    const formCadastro = document.getElementById('formCadastro');
-    const linkEntrar = document.getElementById('linkEntrar');
+const API_CADASTRO_URL = 'http://localhost:7146/api/cadastro'; // HTTP para testes locais
 
-    // Evento de clique no botão "Entrar" (texto)
-    linkEntrar.addEventListener('click', () => {
-        window.location.href = 'index.html';
-    });
+const formCadastro = document.getElementById('formCadastro');
+const linkEntrar = document.getElementById('linkEntrar');
 
-    // Evento de envio do formulário
-    formCadastro.addEventListener('submit', (e) => {
-        e.preventDefault(); // Evita recarregar a página
+linkEntrar.addEventListener('click', () => window.location.href = 'index.html');
 
-        const nome = document.getElementById('nome').value;
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('senha').value;
-        const confirmarSenha = document.getElementById('confirmarSenha').value;
+formCadastro.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        // 1. Validação Simples (Front-End)
-        if (senha !== confirmarSenha) {
-            alert("As senhas não coincidem!");
-            return;
-        }
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const confirmarSenha = document.getElementById('confirmarSenha').value;
 
-        if (senha.length < 6) {
-            alert("A senha deve ter pelo menos 6 caracteres.");
-            return;
-        }
+    if (senha !== confirmarSenha) {
+        alert("As senhas não coincidem!");
+        return;
+    }
 
-        // 2. Chamada para o Back-End (Substitui o localStorage)
-        fetch(API_CADASTRO_URL, {
+    if (senha.length < 6) {
+        alert("A senha deve ter pelo menos 6 caracteres.");
+        return;
+    }
+
+    try {
+        const response = await fetch(API_CADASTRO_URL, {
             method: 'POST',
-            headers: {
-                // Informa que o corpo da requisição é JSON
-                'Content-Type': 'application/json',
-            },
-            // Envia os dados no formato JSON
-            body: JSON.stringify({ nome, email, senha }), // Não enviamos a confirmarSenha
-        })
-        .then(response => {
-            // Verifica se a resposta foi de sucesso (200 OK ou 201 Created)
-            if (response.status === 201 || response.ok) {
-                return response.json(); 
-            }
-            // Se o servidor retornar um erro (ex: email já existe)
-            // Tentamos ler o erro do servidor, se houver
-            return response.json().then(data => {
-                throw new Error(data.message || 'Erro ao processar o cadastro.');
-            }).catch(() => {
-                throw new Error('Falha no cadastro. Email pode já estar em uso.');
-            });
-        })
-        .then(data => {
-            // SUCESSO!
-            alert("Cadastro realizado com sucesso! Redirecionando para o Login.");
-            
-            // Redireciona para o Login
-            window.location.href = 'index.html'; 
-        })
-        .catch(error => {
-            // FALHA: Exibe o erro
-            alert('Falha no Cadastro: ' + error.message);
-            console.error('Erro de Cadastro ou Rede:', error);
-            
-            // DICA: Se você vir um erro de "Falha na Rede" ou "CORS", o problema é no seu servidor.
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, senha })
         });
-    });
-</script>
 
-    
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || "Falha no cadastro. Email pode já estar em uso.");
+        }
+
+        alert("Cadastro realizado com sucesso! Redirecionando para o Login.");
+        window.location.href = 'index.html';
+    } catch (error) {
+        alert('Falha no Cadastro: ' + error.message);
+        console.error(error);
+    }
+});
+</script>
 
 </body>
 </html>
