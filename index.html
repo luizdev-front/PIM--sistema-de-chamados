@@ -1,56 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - InfoTech</title>
-<link rel="stylesheet" href="logins.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - InfoTech</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>    
 
-<!-- HEADER COM LOGO -->
-<header class="header">
-    <h1 class="logo">InfoTech</h1>
-</header>
+    <header class="header">
+        <div class="logo-container">
+            <h1 class="logo">InfoTech</h1>
+        </div>
+    </header>
 
-<div class="container">
-    <div class="card">
-        <h2>Entrar</h2>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="senha" placeholder="Senha">
-        <button id="loginBtn" class="btn">Login</button> 
-        <p class="forgot">Esqueceu a senha?</p>
-        <p class= "cadastro">Cadastre-se</p>
-    </div>
-</div> 
- <script>
-    // Botão de login
-    const loginBtn = document.getElementById('loginBtn');
-    loginBtn.addEventListener('click', () => {
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('senha').value;
+    <div class="container">
+        <div class="card">
+            <h2>Entrar</h2>
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="senha" placeholder="Senha" required>
+                <button type="submit" id="loginBtn" class="btn">Login</button> 
+            </form>
+            
+            <div class="links-uteis">
+                <p class="forgot">Esqueceu a senha?</p>
+                <p class="cadastro">Cadastre-se</p>
+            </div>
+        </div>
+    </div> 
 
-        // Simula validação simples
-        if(email && senha){
-            // Redireciona para a página de chamados
-            window.location.href = 'chamados.html'; 
-        } else {
-            alert('Preencha email e senha');
-        }
-    });
+    <script>
+        // Lógica de Login
+        const loginForm = document.getElementById('loginForm');
+        const cadastroLink = document.querySelector('.cadastro');
+        const forgotLink = document.querySelector('.forgot');
 
-    // Link de cadastro
-    const cadastroLink = document.querySelector('.cadastro');
-    cadastroLink.addEventListener('click', () => {
-        window.location.href = 'cadastro.html'; // Redireciona para a página de cadastro
-    });
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Evita o recarregamento da página
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
 
-    // Link de "Esqueceu a senha?"
-    const forgotLink = document.querySelector('.forgot');
-    forgotLink.addEventListener('click', () => {
-        window.location.href = 'recuperar_senha.html'; // Redireciona para a página de recuperação
-    });
-</script>
+            // --- FUTURO BACK-END ENTRARÁ AQUI ---
+            // Por enquanto, validação simples:
+            if(email && senha){
+                console.log("Tentativa de login:", email);
+                // Simula redirecionamento
+                window.location.href = 'chamados.html'; 
+            } else {
+                alert('Preencha email e senha');
+            }
+        });
+
+        // Navegação
+        cadastroLink.addEventListener('click', () => {
+            window.location.href = 'cadastro.html';
+        });
+
+        forgotLink.addEventListener('click', () => {
+            window.location.href = 'recuperar_senha.html';
+        });
+    </script>
 
 </body>
 </html>
