@@ -3,29 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chamados Concluídos</title>
-    <link rel="stylesheet" href="botoes.css">
+    <title>Concluídos - InfoTech</title> 
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1 class="logo"><span class="icon">💬</span> Sistema de Chamados</h1>
-        <div class="notif">🔔 <span>2</span></div>
-    </header>
 
-    <nav class="tabs">
-        <a href="aberto.html">Aberto</a>
-        <a href="andamento.html">Em andamento</a>
-        <a href="concluido.html" class="active">Concluído</a>
-        <a href="novo.html">Novo Chamado</a>
-    </nav>
-
-    <main>
-        <h2>Chamados Concluídos</h2>
-        <div class="card">
-            <h3>Atualização de software</h3>
-            <p>O software foi atualizado com sucesso.</p>
-            <span class="time">há 1 semana</span>
+<header class="header">
+    <div class="header-content">
+        <div class="logo-container">
+            <h1 class="logo">InfoTech <span style="font-size: 0.8rem; font-weight: normal;">| Concluídos</span></h1>
         </div>
-    </main>
+        <div>
+            <button id="btnSair" class="btn-sair">Sair</button>
+        </div>
+    </div>
+</header>
+
+<nav class="tabs">
+    <a href="chamados.html">Abertos</a>
+    <a href="andamento.html">Em andamento</a>
+    <a href="concluido.html" class="active">Concluídos</a>
+    <a href="novo_chamado.html" style="background-color: rgba(255,255,255,0.1);">+ Novo Chamado</a>
+</nav>
+
+<main>
+    <h2>Histórico de Finalizados</h2>
+    <div id="lista-chamados"></div>
+</main>
+
+<script>
+    // Navegação Sair
+    document.getElementById('btnSair').addEventListener('click', () => window.location.href = 'index.html');
+
+    const container = document.getElementById('lista-chamados');
+
+    // Carrega dados do Banco
+    let todosChamados = JSON.parse(localStorage.getItem('bdChamados')) || [];
+
+    // FILTRO: Apenas status 'concluido'
+    const chamadosConcluidos = todosChamados.filter(c => c.status === 'concluido');
+
+    if (chamadosConcluidos.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#777; margin-top:20px;">Nenhum chamado concluído ainda.</p>';
+    } else {
+        chamadosConcluidos.forEach(chamado => {
+            const div = document.createElement('div');
+            // Class 'status-concluido' deixa a borda VERDE
+            div.className = 'chamado-card status-concluido';
+            div.innerHTML = `
+                <h3>${chamado.titulo}</h3>
+                <p>${chamado.descricao}</p>
+                <div class="meta-info">
+                    <span class="time">Finalizado</span>
+                    <span class="status">#${chamado.id}</span>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+</script>
+
 </body>
 </html>
