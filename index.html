@@ -8,96 +8,70 @@
 </head>
 <body>    
 
-    <header class="header">
-        <div class="logo-container">
-            <h1 class="logo">InfoTech</h1>
-        </div>
-    </header>
+<header class="header">
+    <div class="logo-container">
+        <h1 class="logo">InfoTech</h1>
+    </div>
+</header>
 
-    <div class="container">
-        <div class="card">
-            <h2>Entrar</h2>
-            <form id="loginForm">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="senha" placeholder="Senha" required>
-                <button type="submit" id="loginBtn" class="btn">Login</button> 
-            </form>
-            
-            <div class="links-uteis">
-                <p class="forgot">Esqueceu a senha?</p>
-                <p class="cadastro">Cadastre-se</p>
-            </div>
-        </div>
-    </div> 
-    <script>
-    // URL do seu Back-End para Login
-    const API_LOGIN_URL = 'https://localhost:7146/api/login'; 
-
-    // Referências aos elementos
-    const loginForm = document.getElementById('loginForm');
-    const cadastroLink = document.querySelector('.cadastro');
-    const forgotLink = document.querySelector('.forgot');
-
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Impede o envio tradicional do formulário
+<div class="container">
+    <div class="card">
+        <h2>Entrar</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="senha" placeholder="Senha" required>
+            <button type="submit" id="loginBtn" class="btn">Login</button> 
+        </form>
         
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('senha').value;
+        <div class="links-uteis">
+            <p class="forgot">Esqueceu a senha?</p>
+            <p class="cadastro">Cadastre-se</p>
+        </div>
+    </div>
+</div> 
 
-        // 1. Validação simples no Front-End
-        if(!email || !senha){
-            alert('Preencha email e senha');
-            return; // Interrompe a função se faltar dados
+<script>
+const API_LOGIN_URL = 'http://localhost:7146/api/login'; // HTTP para testes locais
+
+const loginForm = document.getElementById('loginForm');
+const cadastroLink = document.querySelector('.cadastro');
+const forgotLink = document.querySelector('.forgot');
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+
+    if(!email || !senha){
+        alert('Preencha email e senha');
+        return;
+    }
+
+    try {
+        const response = await fetch(API_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha })
+        });
+
+        if (!response.ok) {
+            throw new Error('Email ou senha inválidos.');
         }
 
-        // 2. Chamada para o Back-End (Onde ocorre a interligação)
-        fetch(API_LOGIN_URL, {
-            method: 'POST',
-            headers: {
-                // Informa que o corpo da requisição é JSON
-                'Content-Type': 'application/json',
-            },
-            // Converte os dados para o formato JSON que o Back-End espera
-            body: JSON.stringify({ email, senha }),
-        })
-        .then(response => {
-            // Verifica se a resposta foi bem-sucedida (código 200)
-            if (response.ok) {
-                return response.json(); 
-            }
-            // Se o servidor rejeitar a requisição (ex: 401 Unauthorized)
-            // Lança um erro para cair no bloco .catch
-            throw new Error('Email ou senha inválidos. Tente novamente.');
-        })
-        .then(data => {
-            // SUCESSO! O Back-End validou.
-            
-            // Armazena o token e o nome do usuário no navegador (essencial para manter a sessão)
-            localStorage.setItem('authToken', data.token); 
-            localStorage.setItem('usuarioLogado', data.nome || email); 
-            
-            console.log("Login efetuado com sucesso. Token recebido:", data.token);
+        const data = await response.json();
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('usuarioLogado', data.nome || email);
 
-            // Redireciona para o painel de chamados
-            window.location.href = 'chamados.html'; 
-        })
-        .catch(error => {
-            // FALHA: Exibe o erro de forma amigável e no console
-            alert('Falha no Login: ' + error.message);
-            console.error('Erro de Login ou Rede:', error);
-            
-            // NOTA: Se você estiver recebendo um erro de CORS aqui, a solução está no seu servidor C# (.NET)!
-        });
-    });
+        window.location.href = 'chamados.html';
+    } catch (error) {
+        alert('Falha no Login: ' + error.message);
+        console.error(error);
+    }
+});
 
-    // Navegação (mantida inalterada)
-    cadastroLink.addEventListener('click', () => {
-        window.location.href = 'cadastro.html';
-    });
-
-    forgotLink.addEventListener('click', () => {
-        window.location.href = 'recuperar_senha.html';
-    });
+cadastroLink.addEventListener('click', () => window.location.href = 'cadastro.html');
+forgotLink.addEventListener('click', () => window.location.href = 'recuperar_senha.html');
 </script>
 </body>
 </html>
