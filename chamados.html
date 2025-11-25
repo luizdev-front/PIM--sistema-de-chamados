@@ -34,102 +34,97 @@
 </main>
 
 <script>
-    // --- FUNÇÃO DE EMERGÊNCIA ---
+    // --- BOTÃO DE RESET (Caso de Emergência) ---
     function resetarSistema() {
-        if(confirm("Isso vai apagar todos os chamados e reiniciar o sistema. Tem certeza?")) {
+        if(confirm("Deseja apagar tudo e reiniciar?")) {
             localStorage.removeItem('bdChamados');
-            location.reload(); // Recarrega a página
+            window.location.reload();
         }
     }
 
-    // --- LÓGICA PRINCIPAL ---
+    const container = document.getElementById('lista-chamados');
+
     try {
-        const container = document.getElementById('lista-chamados');
-        
-        // 1. Tenta carregar os dados
-        let dadosBrutos = localStorage.getItem('bdChamados');
+        // 1. Tenta pegar os dados
+        let dadosRaw = localStorage.getItem('bdChamados');
         let todosChamados = [];
 
-        // 2. Verifica se existem dados e se são válidos
-        if (!dadosBrutos) {
-            // Se não tem nada, cria os dados iniciais
-            iniciarDadosPadrao();
-        } else {
-            try {
-                todosChamados = JSON.parse(dadosBrutos);
-                
-                // Verificação extra: Se não for uma lista (array), reseta
-                if (!Array.isArray(todosChamados)) {
-                    throw new Error("Dados corrompidos");
-                }
-            } catch (e) {
-                console.error("Erro ao ler dados, resetando...", e);
-                iniciarDadosPadrao();
-            }
+        if (dadosRaw) {
+            todosChamados = JSON.parse(dadosRaw);
         }
 
-        // Função auxiliar para recarregar a variável após reset
-        function iniciarDadosPadrao() {
-            const padrao = [
-                {id: 1, titulo: "Erro no sistema ao salvar", descricao: "Estou enfrentando um erro ao salvar alterações.", status: "aberto", tempo: "há 2 dias", prioridade: "alta"},
-                {id: 2, titulo: "Problema de conexão de rede", descricao: "Não consigo acessar a internet.", status: "aberto", tempo: "há 5 dias", prioridade: "media"},
-                {id: 3, titulo: "Impressora travada", descricao: "A impressora não responde.", status: "andamento", tempo: "há 1 hora", prioridade: "baixa"}
+        // 2. Se a lista estiver vazia ou inválida, cria o padrão
+        if (!Array.isArray(todosChamados) || todosChamados.length === 0) {
+            todosChamados = [
+                {id: 1, titulo: "Exemplo de Chamado", descricao: "Descrição do erro...", status: "aberto", tempo: "agora", prioridade: "baixa"}
             ];
-            localStorage.setItem('bdChamados', JSON.stringify(padrao));
-            todosChamados = padrao;
+            localStorage.setItem('bdChamados', JSON.stringify(todosChamados));
         }
 
-        // 3. Filtra e Exibe (Apenas Status 'aberto')
+        // 3. Filtra apenas os abertos
         const chamadosAbertos = todosChamados.filter(c => c.status === 'aberto');
 
-        container.innerHTML = ""; // Limpa antes de preencher
-
+        // 4. Renderiza com PROTEÇÃO contra falhas
         if (chamadosAbertos.length === 0) {
             container.innerHTML = '<p style="text-align:center; color:#777; margin-top:20px;">Nenhum chamado aberto.</p>';
         } else {
+            container.innerHTML = ''; // Limpa antes de desenhar
+            
             chamadosAbertos.forEach(chamado => {
+                // TRUQUE DE SEGURANÇA:
+                // Se não tiver prioridade, usa 'normal'. Se não tiver ID, usa um aleatório.
+                const prioridade = chamado.prioridade ? chamado.prioridade : 'normal';
+                const id = chamado.id ? chamado.id : Math.floor(Math.random() * 1000);
+                
+                // Define cor baseada na prioridade (com segurança)
+                let cor = 'gray';
+                if (prioridade === 'alta') cor = 'red';
+                if (prioridade === 'media') cor = 'orange';
+
                 const div = document.createElement('div');
                 div.className = 'chamado-card status-aberto';
-                
-                // Define cor da prioridade
-                let corPrioridade = 'gray';
-                if(chamado.prioridade === 'alta') corPrioridade = 'red';
-                if(chamado.prioridade === 'media') corPrioridade = 'orange';
-
                 div.innerHTML = `
-                    <h3>${chamado.titulo}</h3>
-                    <p>${chamado.descricao}</p>
+                    <h3>${chamado.titulo || 'Sem Título'}</h3>
+                    <p>${chamado.descricao || 'Sem descrição'}</p>
                     <div class="meta-info">
-                        <span class="time">Prioridade: <b style="color:${corPrioridade}">${chamado.prioridade ? chamado.prioridade.toUpperCase() : 'NORMAL'}</b></span>
-                        <span class="status">#${chamado.id}</span>
+                        <span class="time">Prioridade: <b style="color:${cor}">${prioridade.toUpperCase()}</b></span>
+                        <span class="status">#${id}</span>
                     </div>
-                    <button onclick="moverParaAndamento(${chamado.id})" style="margin-top:10px; padding:5px 10px; cursor:pointer; background:#2196F3; color:white; border:none; border-radius:4px;">Atender Chamado</button>
+                    <button onclick="moverParaAndamento(${id})" class="btn-acao" style="margin-top:10px; padding:5px 10px; cursor:pointer; background:#2196F3; color:white; border:none; border-radius:4px;">Atender Chamado</button>
                 `;
                 container.appendChild(div);
             });
         }
 
-    } catch (erroFatal) {
-        alert("Ocorreu um erro no sistema: " + erroFatal.message);
+    } catch (erro) {
+        console.error("Erro detectado:", erro);
+        // Se der erro grave, mostra botão de reset pro usuário não ficar travado
+        container.innerHTML = `
+            <div style="text-align:center; padding:20px; color:red;">
+                <p>Ocorreu um erro nos dados salvos.</p>
+                <button onclick="resetarSistema()" style="background:red; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;">Corrigir Automaticamente</button>
+            </div>
+        `;
     }
 
-    // --- FUNÇÃO PARA MOVER CHAMADO ---
+    // --- FUNÇÃO DE MOVER ---
     function moverParaAndamento(id) {
-        let chamados = JSON.parse(localStorage.getItem('bdChamados'));
-        // Encontra o chamado e muda o status
-        const index = chamados.findIndex(c => c.id === id);
+        let lista = JSON.parse(localStorage.getItem('bdChamados')) || [];
+        const index = lista.findIndex(c => c.id == id); // Usa == para evitar erro de tipo (texto vs numero)
+        
         if (index !== -1) {
-            chamados[index].status = 'andamento';
-            localStorage.setItem('bdChamados', JSON.stringify(chamados));
-            location.reload(); // Recarrega para atualizar a tela
+            lista[index].status = 'andamento';
+            localStorage.setItem('bdChamados', JSON.stringify(lista));
+            window.location.reload();
+        } else {
+            alert("Erro ao encontrar chamado. Tente resetar o sistema.");
         }
     }
-
+    
     // Botão Sair
     document.getElementById('btnSair').addEventListener('click', () => {
         window.location.href = 'index.html';
     });
-
 </script>
 
 </body>
