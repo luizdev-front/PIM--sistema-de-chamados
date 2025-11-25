@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Chamado - InfoTech</title>
+    <title>Chamados Abertos - InfoTech</title> 
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,85 +11,125 @@
 <header class="header">
     <div class="header-content">
         <div class="logo-container">
-            <h1 class="logo">InfoTech <span style="font-size: 0.8rem; font-weight: normal;">| Novo Chamado</span></h1>
+            <h1 class="logo">InfoTech <span style="font-size: 0.8rem; font-weight: normal;">| Chamados</span></h1>
         </div>
         <div>
-            <button id="btnVoltar" class="btn-sair">Cancelar</button>
+            <button onclick="resetarSistema()" style="background:red; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer; font-size:0.7rem; margin-right:10px;">Resetar Dados</button>
+            <button id="btnSair" class="btn-sair">Sair</button>
         </div>
     </div>
 </header>
 
 <nav class="tabs">
-    <a href="chamados.html">Abertos</a>
+    <a href="chamados.html" class="active">Abertos</a>
     <a href="andamento.html">Em andamento</a>
     <a href="concluido.html">Concluídos</a>
-    <a href="novo_chamado.html" class="active" style="background-color: rgba(255,255,255,0.2);">+ Novo Chamado</a>
+    <a href="novo_chamado.html" style="background-color: rgba(255,255,255,0.1);">+ Novo Chamado</a>
 </nav>
 
-<div class="container" style="align-items: flex-start; padding-top: 40px;">
-    <div class="card" style="max-width: 600px; text-align: left;">
-        <h2>Abrir Solicitação</h2>
-        <p style="margin-bottom: 20px; color: #666;">Descreva seu problema detalhadamente.</p>
-        
-        <form id="formNovoChamado">
-            <label for="titulo" style="font-weight: bold; display: block; margin-bottom: 5px;">Título do Problema</label>
-            <input type="text" id="titulo" placeholder="Ex: Impressora não liga" required>
-
-            <label for="descricao" style="font-weight: bold; display: block; margin-bottom: 5px;">Descrição Detalhada</label>
-            <textarea id="descricao" rows="5" placeholder="Descreva o que aconteceu..." required></textarea>
-
-            <label for="prioridade" style="font-weight: bold; display: block; margin-bottom: 5px;">Prioridade</label>
-            <select id="prioridade" class="input-padrao" required>
-                <option value="baixa">Baixa</option>
-                <option value="media" selected>Média</option>
-                <option value="alta">Alta</option>
-            </select>
-
-            <button type="submit" class="btn btn-green" style="margin-top: 20px;">Salvar Chamado</button>
-        </form>
-    </div>
-</div>
+<main>
+    <h2>Chamados Abertos</h2>
+    <div id="lista-chamados">
+        </div>
+</main>
 
 <script>
-    // Botão Cancelar
-    document.getElementById('btnVoltar').addEventListener('click', () => {
-        window.location.href = 'chamados.html';
+    // --- FUNÇÃO DE EMERGÊNCIA ---
+    function resetarSistema() {
+        if(confirm("Isso vai apagar todos os chamados e reiniciar o sistema. Tem certeza?")) {
+            localStorage.removeItem('bdChamados');
+            location.reload(); // Recarrega a página
+        }
+    }
+
+    // --- LÓGICA PRINCIPAL ---
+    try {
+        const container = document.getElementById('lista-chamados');
+        
+        // 1. Tenta carregar os dados
+        let dadosBrutos = localStorage.getItem('bdChamados');
+        let todosChamados = [];
+
+        // 2. Verifica se existem dados e se são válidos
+        if (!dadosBrutos) {
+            // Se não tem nada, cria os dados iniciais
+            iniciarDadosPadrao();
+        } else {
+            try {
+                todosChamados = JSON.parse(dadosBrutos);
+                
+                // Verificação extra: Se não for uma lista (array), reseta
+                if (!Array.isArray(todosChamados)) {
+                    throw new Error("Dados corrompidos");
+                }
+            } catch (e) {
+                console.error("Erro ao ler dados, resetando...", e);
+                iniciarDadosPadrao();
+            }
+        }
+
+        // Função auxiliar para recarregar a variável após reset
+        function iniciarDadosPadrao() {
+            const padrao = [
+                {id: 1, titulo: "Erro no sistema ao salvar", descricao: "Estou enfrentando um erro ao salvar alterações.", status: "aberto", tempo: "há 2 dias", prioridade: "alta"},
+                {id: 2, titulo: "Problema de conexão de rede", descricao: "Não consigo acessar a internet.", status: "aberto", tempo: "há 5 dias", prioridade: "media"},
+                {id: 3, titulo: "Impressora travada", descricao: "A impressora não responde.", status: "andamento", tempo: "há 1 hora", prioridade: "baixa"}
+            ];
+            localStorage.setItem('bdChamados', JSON.stringify(padrao));
+            todosChamados = padrao;
+        }
+
+        // 3. Filtra e Exibe (Apenas Status 'aberto')
+        const chamadosAbertos = todosChamados.filter(c => c.status === 'aberto');
+
+        container.innerHTML = ""; // Limpa antes de preencher
+
+        if (chamadosAbertos.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#777; margin-top:20px;">Nenhum chamado aberto.</p>';
+        } else {
+            chamadosAbertos.forEach(chamado => {
+                const div = document.createElement('div');
+                div.className = 'chamado-card status-aberto';
+                
+                // Define cor da prioridade
+                let corPrioridade = 'gray';
+                if(chamado.prioridade === 'alta') corPrioridade = 'red';
+                if(chamado.prioridade === 'media') corPrioridade = 'orange';
+
+                div.innerHTML = `
+                    <h3>${chamado.titulo}</h3>
+                    <p>${chamado.descricao}</p>
+                    <div class="meta-info">
+                        <span class="time">Prioridade: <b style="color:${corPrioridade}">${chamado.prioridade ? chamado.prioridade.toUpperCase() : 'NORMAL'}</b></span>
+                        <span class="status">#${chamado.id}</span>
+                    </div>
+                    <button onclick="moverParaAndamento(${chamado.id})" style="margin-top:10px; padding:5px 10px; cursor:pointer; background:#2196F3; color:white; border:none; border-radius:4px;">Atender Chamado</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+    } catch (erroFatal) {
+        alert("Ocorreu um erro no sistema: " + erroFatal.message);
+    }
+
+    // --- FUNÇÃO PARA MOVER CHAMADO ---
+    function moverParaAndamento(id) {
+        let chamados = JSON.parse(localStorage.getItem('bdChamados'));
+        // Encontra o chamado e muda o status
+        const index = chamados.findIndex(c => c.id === id);
+        if (index !== -1) {
+            chamados[index].status = 'andamento';
+            localStorage.setItem('bdChamados', JSON.stringify(chamados));
+            location.reload(); // Recarrega para atualizar a tela
+        }
+    }
+
+    // Botão Sair
+    document.getElementById('btnSair').addEventListener('click', () => {
+        window.location.href = 'index.html';
     });
 
-    // Lógica de Salvar Chamado
-    const form = document.getElementById('formNovoChamado');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const titulo = document.getElementById('titulo').value;
-        const descricao = document.getElementById('descricao').value;
-        const prioridade = document.getElementById('prioridade').value;
-
-        // 1. Pega a lista atual de chamados do banco (localStorage)
-        let todosChamados = JSON.parse(localStorage.getItem('bdChamados')) || [];
-
-        // 2. Cria o objeto do novo chamado
-        const novoChamado = {
-            id: Date.now(), // Gera um ID único baseado na hora atual
-            titulo: titulo,
-            descricao: descricao,
-            prioridade: prioridade,
-            status: "aberto", // Todo novo chamado começa como "aberto"
-            tempo: "Agora mesmo"
-        };
-
-        // 3. Adiciona no início da lista (unshift)
-        todosChamados.unshift(novoChamado);
-
-        // 4. Salva de volta no banco
-        localStorage.setItem('bdChamados', JSON.stringify(todosChamados));
-
-        alert("Chamado aberto com sucesso!");
-
-        // 5. Volta para a lista principal
-        window.location.href = 'chamados.html';
-    });
 </script>
 
 </body>
