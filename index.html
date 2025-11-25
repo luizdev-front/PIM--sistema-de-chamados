@@ -29,39 +29,75 @@
             </div>
         </div>
     </div> 
-
     <script>
-        // Lógica de Login
-        const loginForm = document.getElementById('loginForm');
-        const cadastroLink = document.querySelector('.cadastro');
-        const forgotLink = document.querySelector('.forgot');
+    // URL do seu Back-End para Login
+    const API_LOGIN_URL = 'https://localhost:7146/api/login'; 
 
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Evita o recarregamento da página
-            
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
+    // Referências aos elementos
+    const loginForm = document.getElementById('loginForm');
+    const cadastroLink = document.querySelector('.cadastro');
+    const forgotLink = document.querySelector('.forgot');
 
-            // --- FUTURO BACK-END ENTRARÁ AQUI ---
-            // Por enquanto, validação simples:
-            if(email && senha){
-                console.log("Tentativa de login:", email);
-                // Simula redirecionamento
-                window.location.href = 'chamados.html'; 
-            } else {
-                alert('Preencha email e senha');
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Impede o envio tradicional do formulário
+        
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        // 1. Validação simples no Front-End
+        if(!email || !senha){
+            alert('Preencha email e senha');
+            return; // Interrompe a função se faltar dados
+        }
+
+        // 2. Chamada para o Back-End (Onde ocorre a interligação)
+        fetch(API_LOGIN_URL, {
+            method: 'POST',
+            headers: {
+                // Informa que o corpo da requisição é JSON
+                'Content-Type': 'application/json',
+            },
+            // Converte os dados para o formato JSON que o Back-End espera
+            body: JSON.stringify({ email, senha }),
+        })
+        .then(response => {
+            // Verifica se a resposta foi bem-sucedida (código 200)
+            if (response.ok) {
+                return response.json(); 
             }
-        });
+            // Se o servidor rejeitar a requisição (ex: 401 Unauthorized)
+            // Lança um erro para cair no bloco .catch
+            throw new Error('Email ou senha inválidos. Tente novamente.');
+        })
+        .then(data => {
+            // SUCESSO! O Back-End validou.
+            
+            // Armazena o token e o nome do usuário no navegador (essencial para manter a sessão)
+            localStorage.setItem('authToken', data.token); 
+            localStorage.setItem('usuarioLogado', data.nome || email); 
+            
+            console.log("Login efetuado com sucesso. Token recebido:", data.token);
 
-        // Navegação
-        cadastroLink.addEventListener('click', () => {
-            window.location.href = 'cadastro.html';
+            // Redireciona para o painel de chamados
+            window.location.href = 'chamados.html'; 
+        })
+        .catch(error => {
+            // FALHA: Exibe o erro de forma amigável e no console
+            alert('Falha no Login: ' + error.message);
+            console.error('Erro de Login ou Rede:', error);
+            
+            // NOTA: Se você estiver recebendo um erro de CORS aqui, a solução está no seu servidor C# (.NET)!
         });
+    });
 
-        forgotLink.addEventListener('click', () => {
-            window.location.href = 'recuperar_senha.html';
-        });
-    </script>
+    // Navegação (mantida inalterada)
+    cadastroLink.addEventListener('click', () => {
+        window.location.href = 'cadastro.html';
+    });
 
+    forgotLink.addEventListener('click', () => {
+        window.location.href = 'recuperar_senha.html';
+    });
+</script>
 </body>
 </html>
