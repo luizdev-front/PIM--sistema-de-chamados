@@ -30,52 +30,6 @@
     </div>
 </div>
 
-<script>
-const API_LOGIN_URL = 'http://localhost:7146/api/login';
-
-const loginForm = document.getElementById('loginForm');
-const cadastroLink = document.querySelector('.cadastro');
-const forgotLink = document.querySelector('.forgot');
-const loginError = document.getElementById('loginError');
-
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    loginError.textContent = ''; // limpa erro anterior
-    
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
-
-    if (!email || !senha) {
-        loginError.textContent = 'Preencha email e senha.';
-        return;
-    }
-
-    try {
-        const response = await fetch(API_LOGIN_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, senha })
-        });
-
-        if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
-            throw new Error(data.message || 'Email ou senha inválidos.');
-        }
-
-        const data = await response.json();
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('usuarioLogado', data.nome || email);
-
-        window.location.href = 'chamados.html';
-    } catch (error) {
-        loginError.textContent = 'Falha no Login: ' + error.message;
-        console.error(error);
-    }
-});
-
-cadastroLink.addEventListener('click', () => window.location.href = 'cadastro.html');
-forgotLink.addEventListener('click', () => window.location.href = 'recuperar_senha.html');
-</script>
 
 </body>
 </html>
